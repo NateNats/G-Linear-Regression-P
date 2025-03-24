@@ -1,8 +1,8 @@
 import numpy as np
 
 class Linear_Regression():
-    def __init__(self, alpha=0.01, n_iter=1000):
-        self.alpha = alpha
+    def __init__(self, alpha=0.00001, n_iter=1000):
+        self.alpha = alpha # jangan terlalu besar, nanti nilai w atau b bakal infinite
         self.n_iter = n_iter
         self.params = {}
 
@@ -12,6 +12,9 @@ class Linear_Regression():
         input:
         - X (untuk training data)
         """
+
+        # handle 1d or more columns in X_train
+        X_train = X_train.shape[-1, 1] if X_train.ndim == 1 else X_train
 
         _, n_features = X_train.shape
         self.params['W'] = np.zeros(n_features)
@@ -36,6 +39,9 @@ class Linear_Regression():
         - b = intercept (titik potong garis linier)
         - m = data
         """
+
+        # handle 1d or more columns in X_train
+        X_train = X_train.shape[-1, 1] if X_train.ndim == 1 else X_train
         
         W = self.params['W']
         b = self.params['b']
@@ -46,15 +52,17 @@ class Linear_Regression():
             y_pred = np.dot(X_train, W) + b
 
             # partial derivative of coefficients
-            dw = (2/m) * np.sum(y_pred - y_train)
-            db = (2/m) * np.dot(X_train.T, (y_pred - y_train))
+            db = (2/m) * np.sum(y_pred - y_train)
+            dw = (2/m) * np.dot(X_train.T, (y_pred - y_train))
+
 
             # update coefficients
             W -= self.alpha * dw
             b -= self.alpha * db
-        
+
         self.params['W'] = W
         self.params['b'] = b
+
 
         return self
 
